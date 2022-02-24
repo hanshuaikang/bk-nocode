@@ -34,7 +34,7 @@ from itsm.postman.models import RemoteApi, RemoteApiInstance
 from itsm.postman.serializers import ApiInstanceSerializer
 from itsm.project.handler.project_handler import ProjectHandler
 from nocode.base.basic import check_user_owner_creator
-from nocode.base.constants import CUSTOM, FORMULA, WORKSHEET
+from nocode.base.constants import CUSTOM, FORMULA, WORKSHEET, SUPPORT_NUM_RANGE
 from nocode.project_manager.handlers.project_white_handler import ProjectWhiteHandler
 from nocode.worksheet.handlers.worksheet_field_handler import WorkSheetFieldIndexHandler
 from nocode.worksheet.models import WorkSheetField, WorkSheet
@@ -51,6 +51,7 @@ class WorkSheetFieldSerializer(serializers.ModelSerializer):
     api_info = JSONField(required=False)
     choice = JSONField(required=False, initial=[])
     kv_relation = JSONField(required=False, initial={})
+    num_range = serializers.JSONField(required=False, initial=[])
 
     def validate_worksheet_id(self, worksheet_id):
         try:
@@ -252,7 +253,7 @@ class WorkSheetFieldItemSerializer(serializers.ModelSerializer):
         if attrs.get("type") == FORMULA:
             self.validated_formula_config(attrs)
 
-        if attrs.get("type") in ["CHECKBOX", "MULTISELECT", "TREESELECT"]:
+        if attrs.get("type") in SUPPORT_NUM_RANGE:
             num_range = attrs.get("num_range")
             # 如果传了num_range 但是数量等于不是两个
             if num_range and len(num_range) != 2:
